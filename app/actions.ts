@@ -20,19 +20,23 @@ export const signUpAction = async (formData: FormData) => {
     );
   }
 
-  const response = await fetch("/api/verify", {
+  // Call FastAPI endpoint directly, no longer use the API route
+  const response = await fetch("http://127.0.0.1:8000/verify", {
     method: "POST",
     headers: {
-       "Content-Type": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: JSON.stringify({ name, email }),
+    body: new URLSearchParams({ name: name || "", email: email || "" }).toString(),
   });
-  
-  
+
   if (!response.ok) {
     throw new Error("Verification failed");
   }
 
+  const verifyStatus = await response.json();
+  if (verifyStatus.status !== "valid") {
+    return encodedRedirect("error", "/sign-up", "not found on roster");
+  }
 
   const { error } = await supabase.auth.signUp({
     email,
