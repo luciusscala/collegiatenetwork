@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const signUpAction = async (formData: FormData) => {
+  const name = formData.get("name")?.toString();
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
   const supabase = await createClient();
@@ -18,6 +19,20 @@ export const signUpAction = async (formData: FormData) => {
       "Email and password are required",
     );
   }
+
+  const response = await fetch("/api/verify", {
+    method: "POST",
+    headers: {
+       "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name, email }),
+  });
+  
+  
+  if (!response.ok) {
+    throw new Error("Verification failed");
+  }
+
 
   const { error } = await supabase.auth.signUp({
     email,
