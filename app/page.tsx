@@ -1,16 +1,23 @@
-import Hero from "@/components/hero";
-import ConnectSupabaseSteps from "@/components/tutorial/connect-supabase-steps";
-import SignUpUserSteps from "@/components/tutorial/sign-up-user-steps";
-import { hasEnvVars } from "@/utils/supabase/check-env-vars";
+import Link from "next/link";
 
-export default async function Home() {
+export default function Home() {
   return (
-    <>
-      <Hero />
-      <main className="flex-1 flex flex-col gap-6 px-4">
-        <h2 className="font-medium text-xl mb-4">Next steps</h2>
-        {hasEnvVars ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
-      </main>
-    </>
+    <main className="min-h-screen min-w-full flex items-center justify-center bg-[#02503B]">
+      <div className="flex flex-col items-center">
+        <h1 className="text-4xl font-bold mb-8" style={{ color: "#B04F17" }}>
+          This is the landing page.
+        </h1>
+        <div className="mt-2 text-lg" style={{ color: "#B04F17" }}>
+          check your eligibility{" "}
+          <Link
+            href="/sign-up"
+            className="underline font-bold"
+            style={{ color: "#B04F17" }}
+          >
+            here
+          </Link>
+        </div>
+      </div>
+    </main>
   );
 }
