@@ -8,8 +8,6 @@ export default async function CreateSessionPage() {
   
   if (!user) redirect('/sign-in');
 
-  let errorMessage = "";
-
   async function createSession(formData: FormData) {
     'use server';
     
@@ -23,8 +21,7 @@ export default async function CreateSessionPage() {
     const location = formData.get('location') as string;
 
     if (!title || !date || !location) {
-      errorMessage = 'Please fill in all required fields';
-      return { error: errorMessage };
+      return { error: 'Please fill in all required fields' };
     }
 
     try {
@@ -56,8 +53,7 @@ export default async function CreateSessionPage() {
       redirect('/sessions');
     } catch (error) {
       console.error('Error creating session:', error);
-      errorMessage = 'Failed to create session. Please try again.';
-      return { error: errorMessage };
+      return { error: 'Failed to create session. Please try again.' };
     }
   }
 
