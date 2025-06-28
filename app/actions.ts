@@ -38,7 +38,7 @@ export const signUpAction = async (formData: FormData) => {
     return encodedRedirect("error", "/sign-up", "not found on roster");
   }
 
-  const { error } = await supabase.auth.signUp({
+  const { data: { user }, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -49,13 +49,30 @@ export const signUpAction = async (formData: FormData) => {
   if (error) {
     console.error(error.code + " " + error.message);
     return encodedRedirect("error", "/sign-up", error.message);
-  } else {
-    return encodedRedirect(
-      "success",
-      "/sign-up",
-      "Thanks for signing up! Please check your email for a verification link.",
-    );
   }
+
+  // Insert the user into your custom users table
+  if (user) {
+    const { error: insertError } = await supabase
+      .from("users")
+      .insert({
+        id: user.id,                        // same UUID as auth.users.id
+        name: name || "Unnamed",            // from signup form
+        school: "Unknown",                  // or you can pre-fill if you know
+        position: "Unknown",
+      });
+
+    if (insertError) {
+      console.error("Error inserting user into users table:", insertError);
+      // Don't fail the signup if this fails, but log it
+    }
+  }
+
+  return encodedRedirect(
+    "success",
+    "/sign-up",
+    "Thanks for signing up! Please check your email for a verification link.",
+  );
 };
 
 export const signInAction = async (formData: FormData) => {

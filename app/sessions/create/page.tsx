@@ -45,13 +45,16 @@ export default async function CreateSessionPage() {
         .insert({
           session_id: session.id,
           user_id: user.id,
-          role: 'host'
         });
 
       if (memberError) throw memberError;
 
       redirect('/sessions');
     } catch (error) {
+      // Ignore Next.js redirect errors
+      if (error instanceof Error && error.message === 'NEXT_REDIRECT') {
+        return;
+      }
       console.error('Error creating session:', error);
       return { error: 'Failed to create session. Please try again.' };
     }
