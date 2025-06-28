@@ -39,9 +39,9 @@ export default async function DashboardPage() {
     // Fallback: fetch upcoming session
     const { data: session } = await supabase
       .from("session_members")
-      .select("session:sessions(title, start_time, location)")
+      .select("session:sessions(title, date, location)")
       .eq("user_id", user.id)
-      .order("session.start_time", { ascending: true })
+      .order("session.date", { ascending: true })
       .limit(1)
       .maybeSingle();
     upcomingSession = session?.session;
@@ -68,7 +68,7 @@ export default async function DashboardPage() {
           <div>
             <div className="font-semibold">{upcomingSession.title}</div>
             <div className="text-xs text-neutral-500">{upcomingSession.location}</div>
-            <div className="text-xs text-neutral-500">{upcomingSession.start_time && new Date(upcomingSession.start_time).toLocaleString()}</div>
+            <div className="text-xs text-neutral-500">{upcomingSession.date && new Date(upcomingSession.date).toLocaleString()}</div>
           </div>
         ) : (
           <div className="text-neutral-400">No upcoming sessions</div>
