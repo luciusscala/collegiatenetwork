@@ -6,20 +6,20 @@ interface Session {
   id: string;
   title: string;
   date: string;
-  location: string;
+  address: string;
 }
 
 async function fetchUserSessions(userId: string, supabase: any): Promise<Session[]> {
   // Sessions where user is host
   const { data: hostedSessions, error: hostError } = await supabase
     .from("sessions")
-    .select("id, title, date, location")
+    .select("id, title, date, address")
     .eq("host_id", userId);
 
   // Sessions where user is a member (excluding those where user is host)
   const { data: memberSessions, error: memberError } = await supabase
     .from("session_members")
-    .select("session:sessions(id, title, date, location)")
+    .select("session:sessions(id, title, date, address)")
     .eq("user_id", userId);
 
   if (hostError || memberError) {
@@ -66,7 +66,7 @@ export default async function SessionsPage() {
                   {session.title}
                 </div>
                 <div className="text-sm text-neutral-500 mb-1">
-                  {session.location}
+                  {session.address}
                 </div>
                 <div className="text-xs text-neutral-400">
                   {new Date(session.date).toLocaleString()}

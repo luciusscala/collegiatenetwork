@@ -1,14 +1,13 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { joinSession, leaveSession } from "@/app/actions/sessionActions";
 
 interface Session {
   id: string;
   title: string;
   date: string;
-  location: string;
+  address: string;
   host_id: string;
 }
 
@@ -17,11 +16,11 @@ interface Member {
   name: string | null;
 }
 
-async function fetchSessionDetails(sessionId: string, userId: string, supabase: any) {
+async function fetchSessionDetails(sessionId: string, userId: string | null, supabase: any) {
   // Fetch session details
   const { data: session, error: sessionError } = await supabase
     .from("sessions")
-    .select("id, title, date, location, host_id")
+    .select("id, title, date, address, host_id")
     .eq("id", sessionId)
     .single();
 
@@ -30,7 +29,7 @@ async function fetchSessionDetails(sessionId: string, userId: string, supabase: 
   }
 
   // Fetch session members with user names
-  const { data: membersData, error: membersError } = await supabase
+  const { data: membersData } = await supabase
     .from("session_members")
     .select("user_id, user:users(name)")
     .eq("session_id", sessionId);
@@ -41,8 +40,8 @@ async function fetchSessionDetails(sessionId: string, userId: string, supabase: 
   }));
 
   // Determine if the user is host or member
-  const isHost = session.host_id === userId;
-  const isMember = members.some((m) => m.id === userId);
+  const isHost = userId ? session.host_id === userId : false;
+  const isMember = userId ? members.some((m) => m.id === userId) : false;
 
   return { session, members, isHost, isMember };
 }
@@ -51,16 +50,15 @@ export default async function SessionDetailsPage({ params }: { params: { id: str
   const { id } = await params;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+  const userId = user ? user.id : null;
 
-  if (!user) redirect("/sign-in");
-
-  const { session, members, isHost, isMember } = await fetchSessionDetails(id, user.id, supabase);
+  const { session, members, isHost, isMember } = await fetchSessionDetails(id, userId, supabase);
 
   if (!session) {
     return (
       <main className="max-w-xl mx-auto px-4 py-16 text-center">
         <h1 className="text-2xl font-bold mb-4 text-neutral-900 dark:text-neutral-100">Session not found</h1>
-        <p className="text-neutral-500 mb-8">This session does not exist or you do not have access.</p>
+        <p className="text-neutral-500 mb-8">This session does not exist.</p>
         <Link href="/sessions" className="text-green-700 hover:underline">Back to Sessions</Link>
       </main>
     );
@@ -69,7 +67,7 @@ export default async function SessionDetailsPage({ params }: { params: { id: str
   return (
     <main className="max-w-xl mx-auto px-4 py-10">
       <h1 className="text-2xl font-bold mb-4 text-neutral-900 dark:text-neutral-100">{session.title}</h1>
-      <div className="mb-2 text-neutral-600 dark:text-neutral-300">{session.location}</div>
+      <div className="mb-2 text-neutral-600 dark:text-neutral-300">{session.address}</div>
       <div className="mb-6 text-neutral-400 text-sm">{new Date(session.date).toLocaleString()}</div>
 
       <div className="mb-8">
@@ -91,26 +89,36 @@ export default async function SessionDetailsPage({ params }: { params: { id: str
       </div>
 
       <div className="flex gap-4">
-        {isHost ? null : isMember ? (
-          <form action={leaveSession} method="POST">
-            <input type="hidden" name="session_id" value={session.id} />
-            <button
-              type="submit"
-              className="px-4 py-2 rounded bg-neutral-200 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-100 font-medium hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors"
-            >
-              Leave Session
-            </button>
-          </form>
-        ) : (
-          <form action={joinSession} method="POST">
-            <input type="hidden" name="session_id" value={session.id} />
-            <button
-              type="submit"
-              className="px-4 py-2 rounded bg-green-700 text-white font-medium hover:bg-green-800 transition-colors"
-            >
-              Join Session
-            </button>
-          </form>
+        {isHost && (
+          <Link
+            href={`/sessions/${session.id}/edit`}
+            className="px-4 py-2 rounded bg-green-700 text-white font-medium hover:bg-green-800 transition-colors"
+          >
+            Edit Session
+          </Link>
+        )}
+        {userId && !isHost && (
+          isMember ? (
+            <form action={leaveSession} method="POST">
+              <input type="hidden" name="session_id" value={session.id} />
+              <button
+                type="submit"
+                className="px-4 py-2 rounded bg-neutral-200 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-100 font-medium hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors"
+              >
+                Leave Session
+              </button>
+            </form>
+          ) : (
+            <form action={joinSession} method="POST">
+              <input type="hidden" name="session_id" value={session.id} />
+              <button
+                type="submit"
+                className="px-4 py-2 rounded bg-green-700 text-white font-medium hover:bg-green-800 transition-colors"
+              >
+                Join Session
+              </button>
+            </form>
+          )
         )}
       </div>
     </main>

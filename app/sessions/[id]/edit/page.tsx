@@ -12,7 +12,7 @@ export default async function EditSessionPage({ params }: { params: { id: string
   // Fetch session details
   const { data: session, error } = await supabase
     .from("sessions")
-    .select("id, title, date, location, host_id")
+    .select("id, title, date, address, host_id")
     .eq("id", id)
     .single();
 
@@ -63,12 +63,12 @@ export default async function EditSessionPage({ params }: { params: { id: string
           />
         </div>
         <div>
-          <label htmlFor="location" className="block text-sm font-medium mb-1 text-neutral-700 dark:text-neutral-200">Location</label>
+          <label htmlFor="address" className="block text-sm font-medium mb-1 text-neutral-700 dark:text-neutral-200">Location / Address</label>
           <input
             type="text"
-            id="location"
-            name="location"
-            defaultValue={session.location}
+            id="address"
+            name="address"
+            defaultValue={session.address}
             required
             className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
           />

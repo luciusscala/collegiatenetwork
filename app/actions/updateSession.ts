@@ -14,7 +14,7 @@ export async function updateSessionAction(sessionId: string, formData: FormData)
     // Convert 'YYYY-MM-DDTHH:mm' to ISO string with 'Z' (UTC)
     date = new Date(date).toISOString();
   }
-  const location = formData.get("location")?.toString() || "";
+  const address = formData.get("address")?.toString() || "";
 
   try {
     // Fetch session to check host
@@ -29,7 +29,7 @@ export async function updateSessionAction(sessionId: string, formData: FormData)
     // Update session
     const { error: updateError } = await supabase
       .from("sessions")
-      .update({ title, date, location })
+      .update({ title, date, address })
       .eq("id", sessionId);
     if (updateError) throw updateError;
     redirect(`/sessions`); // Redirect to sessions list after save

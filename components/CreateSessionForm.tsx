@@ -45,15 +45,15 @@ export default function CreateSessionForm({ createSession }: { createSession: (f
           />
         </div>
         <div>
-          <label htmlFor="location" className="block text-sm font-medium mb-1">
-            Location Name *
+          <label htmlFor="address" className="block text-sm font-medium mb-1">
+            Location / Address *
           </label>
           <input
             type="text"
-            id="location"
-            name="location"
+            id="address"
+            name="address"
             required
-            placeholder="e.g. UCLA Field 4"
+            placeholder="123 Main St, Springfield"
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>

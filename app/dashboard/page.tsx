@@ -40,7 +40,7 @@ export default async function DashboardPage() {
     // Fallback: fetch upcoming session
     const { data: session } = await supabase
       .from("session_members")
-      .select("session:sessions(title, date, location)")
+      .select("session:sessions(title, date, address)")
       .eq("user_id", user.id)
       .order("session.date", { ascending: true })
       .limit(1)
@@ -49,7 +49,7 @@ export default async function DashboardPage() {
     // Fallback: fetch next match
     const { data: match } = await supabase
       .from("team_members")
-      .select("team:teams(team_matches!inner(date, location, home_team, away_team))")
+      .select("team:teams(team_matches!inner(date, address, home_team, away_team))")
       .eq("user_id", user.id)
       .order("team.team_matches.date", { ascending: true })
       .limit(1)
@@ -78,7 +78,7 @@ export default async function DashboardPage() {
         {upcomingSession ? (
           <div>
             <div className="font-semibold">{upcomingSession.title}</div>
-            <div className="text-xs text-neutral-500">{upcomingSession.location}</div>
+            <div className="text-xs text-neutral-500">{upcomingSession.address}</div>
             <div className="text-xs text-neutral-500">{upcomingSession.date && new Date(upcomingSession.date).toLocaleString()}</div>
           </div>
         ) : (
@@ -91,7 +91,7 @@ export default async function DashboardPage() {
         {nextMatch ? (
           <div>
             <div className="font-semibold">{nextMatch.home_team} vs. {nextMatch.away_team}</div>
-            <div className="text-xs text-neutral-500">{nextMatch.location}</div>
+            <div className="text-xs text-neutral-500">{nextMatch.address}</div>
             <div className="text-xs text-neutral-500">{nextMatch.date && new Date(nextMatch.date).toLocaleString()}</div>
           </div>
         ) : (
@@ -100,12 +100,10 @@ export default async function DashboardPage() {
       </InfoCard>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-8">
+      <div className="grid grid-cols-2 sm:grid-cols-2 gap-3 mt-8">
         <Link href="/sessions/create"><Button className="w-full bg-neutral-800 text-white rounded-xl px-4 py-2 hover:bg-neutral-700 flex gap-2"><Plus size={18}/>Create Session</Button></Link>
-        <Link href="/sessions"><Button className="w-full bg-neutral-800 text-white rounded-xl px-4 py-2 hover:bg-neutral-700 flex gap-2"><Search size={18}/>Find Sessions</Button></Link>
-        <Link href="/teams/create"><Button className="w-full bg-neutral-800 text-white rounded-xl px-4 py-2 hover:bg-neutral-700 flex gap-2"><Building2 size={18}/>Create Team</Button></Link>
-        <Link href="/teams"><Button className="w-full bg-neutral-800 text-white rounded-xl px-4 py-2 hover:bg-neutral-700 flex gap-2"><Users size={18}/>My Teams</Button></Link>
-        <Link href="/matches/create"><Button className="w-full bg-neutral-800 text-white rounded-xl px-4 py-2 hover:bg-neutral-700 flex gap-2"><Sword size={18}/>Schedule Match</Button></Link>
+        <Link href="/sessions"><Button className="w-full bg-neutral-800 text-white rounded-xl px-4 py-2 hover:bg-neutral-700 flex gap-2"><Users size={18}/>My Sessions</Button></Link>
+        <Link href="/sessions/find"><Button className="w-full bg-neutral-800 text-white rounded-xl px-4 py-2 hover:bg-neutral-700 flex gap-2"><Search size={18}/>Find Sessions</Button></Link>
         <Link href="/players"><Button className="w-full bg-neutral-800 text-white rounded-xl px-4 py-2 hover:bg-neutral-700 flex gap-2"><FileText size={18}/>Find Players</Button></Link>
       </div>
     </main>

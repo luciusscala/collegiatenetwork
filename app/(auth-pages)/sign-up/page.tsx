@@ -32,7 +32,7 @@ export default async function Signup(props: {
           <Label htmlFor="name">full name</Label>
           <Input name="name" placeholder="name as shown on roster"/>
           <Label htmlFor="email">school email</Label>
-          <Input name="email" placeholder="you@example.com" required />
+          <Input name="email" placeholder="you@school.edu" required />
           <Label htmlFor="password">password</Label>
           <Input
             type="password"
