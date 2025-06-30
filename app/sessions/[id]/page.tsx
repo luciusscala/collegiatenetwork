@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { joinSession, leaveSession } from "@/app/actions/sessionActions";
 
 interface Session {
   id: string;
@@ -47,12 +48,13 @@ async function fetchSessionDetails(sessionId: string, userId: string, supabase: 
 }
 
 export default async function SessionDetailsPage({ params }: { params: { id: string } }) {
+  const { id } = await params;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) redirect("/sign-in");
 
-  const { session, members, isHost, isMember } = await fetchSessionDetails(params.id, user.id, supabase);
+  const { session, members, isHost, isMember } = await fetchSessionDetails(id, user.id, supabase);
 
   if (!session) {
     return (
@@ -89,15 +91,9 @@ export default async function SessionDetailsPage({ params }: { params: { id: str
       </div>
 
       <div className="flex gap-4">
-        {isHost ? (
-          <Link
-            href={`/sessions/${session.id}/edit`}
-            className="px-4 py-2 rounded bg-green-700 text-white font-medium hover:bg-green-800 transition-colors"
-          >
-            Edit Session
-          </Link>
-        ) : isMember ? (
-          <form action={`/sessions/${session.id}/leave`} method="POST">
+        {isHost ? null : isMember ? (
+          <form action={leaveSession} method="POST">
+            <input type="hidden" name="session_id" value={session.id} />
             <button
               type="submit"
               className="px-4 py-2 rounded bg-neutral-200 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-100 font-medium hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors"
@@ -106,7 +102,8 @@ export default async function SessionDetailsPage({ params }: { params: { id: str
             </button>
           </form>
         ) : (
-          <form action={`/sessions/${session.id}/join`} method="POST">
+          <form action={joinSession} method="POST">
+            <input type="hidden" name="session_id" value={session.id} />
             <button
               type="submit"
               className="px-4 py-2 rounded bg-green-700 text-white font-medium hover:bg-green-800 transition-colors"

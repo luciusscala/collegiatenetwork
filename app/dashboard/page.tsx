@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Calendar, Users, Plus, Search, Building2, Sword, FileText } from "lucide-react";
 import Link from "next/link";
+import { signOutAction } from "@/app/actions";
 
 function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -58,6 +59,16 @@ export default async function DashboardPage() {
 
   return (
     <main className="w-full max-w-3xl mx-auto px-4 py-8 font-sans">
+      <div className="w-full flex justify-end mb-4">
+        <form action={signOutAction} method="POST">
+          <button
+            type="submit"
+            className="px-4 py-2 rounded bg-neutral-200 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-100 font-medium hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors"
+          >
+            Sign Out
+          </button>
+        </form>
+      </div>
       {/* Greeting */}
       <h1 className="text-3xl font-bold mb-1">Welcome back, {userData?.name || "Athlete"}</h1>
       <div className="text-lg text-neutral-600 mb-6">{userData?.position && `${userData.position} at `}{userData?.school}</div>
