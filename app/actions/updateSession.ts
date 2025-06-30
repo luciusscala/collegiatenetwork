@@ -9,7 +9,11 @@ export async function updateSessionAction(sessionId: string, formData: FormData)
   if (!user) return redirect("/sign-in");
 
   const title = formData.get("title")?.toString() || "";
-  const date = formData.get("date")?.toString() || "";
+  let date = formData.get("date")?.toString() || "";
+  if (date) {
+    // Convert 'YYYY-MM-DDTHH:mm' to ISO string with 'Z' (UTC)
+    date = new Date(date).toISOString();
+  }
   const location = formData.get("location")?.toString() || "";
 
   try {
@@ -28,13 +32,13 @@ export async function updateSessionAction(sessionId: string, formData: FormData)
       .update({ title, date, location })
       .eq("id", sessionId);
     if (updateError) throw updateError;
-    redirect(`/sessions/${sessionId}`); // No return after redirect
+    redirect(`/sessions`); // Redirect to sessions list after save
   } catch (error) {
     // Ignore Next.js redirect errors
     if (error instanceof Error && error.message === 'NEXT_REDIRECT') {
       return;
     }
     console.error("Error updating session:", error);
-    redirect(`/sessions/${sessionId}/edit?error=Failed%20to%20update%20session`);
+    redirect(`/sessions`);
   }
 } 
