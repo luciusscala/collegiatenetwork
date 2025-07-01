@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import Button from "@/components/ui/button";
+import Input from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { signUpAction } from "@/app/actions";
 
@@ -73,62 +72,55 @@ export function SignupForm() {
   }
 
   return (
-    <form onSubmit={handleSignup} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="fullName">Full Name</Label>
-        <Input
-          id="fullName"
-          name="fullName"
-          placeholder="Enter your full name"
-          required
-          disabled={isEligible}
-        />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          placeholder="Enter your email"
-          required
-          disabled={isEligible}
-        />
-      </div>
-
+    <form
+      onSubmit={handleSignup}
+      className="max-w-md w-full mx-auto flex flex-col justify-center min-h-screen px-4 text-[#B04F17]"
+      style={{ fontFamily: 'Inter, sans-serif' }}
+    >
+      <Input
+        label="full name"
+        id="fullName"
+        name="fullName"
+        placeholder="Enter your full name"
+        required
+        disabled={isEligible}
+      />
+      <Input
+        label="school email"
+        id="email"
+        name="email"
+        type="email"
+        placeholder="Enter your school email"
+        required
+        disabled={isEligible}
+      />
       {isEligible && (
         <>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
-            <Input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              placeholder="Confirm your password"
-              required
-            />
-          </div>
+          <Input
+            label="password"
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Enter your password"
+            required
+          />
+          <Input
+            label="confirm password"
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            placeholder="Confirm your password"
+            required
+          />
         </>
       )}
-
       {error && (
-        <div className="text-red-500 text-sm">
+        <div className="text-red-500 text-lg font-black mb-6 text-center">
           {error}
         </div>
       )}
-
       <Button type="submit" disabled={isLoading}>
-        {isLoading ? "Verifying..." : isEligible ? "Sign Up" : "Verify Eligibility"}
+        {isLoading ? "Verifying..." : isEligible ? "sign up" : "verify eligibility"}
       </Button>
     </form>
   );

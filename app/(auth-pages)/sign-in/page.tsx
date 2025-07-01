@@ -1,44 +1,54 @@
 import { signInAction } from "@/app/actions";
 import { FormMessage, Message } from "@/components/form-message";
-import { SubmitButton } from "@/components/submit-button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import Button from "@/components/ui/button";
+import Input from "@/components/ui/input";
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
 
 export default async function Login(props: { searchParams: Promise<Message> }) {
   const searchParams = await props.searchParams;
   return (
-    <form className="flex-1 flex flex-col min-w-64">
-      <h1 className="text-2xl font-medium">Sign in</h1>
-      <p className="text-sm text-foreground">
-        Don't have an account?{" "}
-        <Link className="text-foreground font-medium underline" href="/sign-up">
-          Sign up
-        </Link>
-      </p>
-      <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-        <Label htmlFor="email">Email</Label>
-        <Input name="email" placeholder="you@example.com" required />
-        <div className="flex justify-between items-center">
-          <Label htmlFor="password">Password</Label>
-          <Link
-            className="text-xs text-foreground underline"
-            href="/forgot-password"
-          >
-            Forgot Password?
-          </Link>
-        </div>
+    <>
+      <form
+        className="max-w-md w-full mx-auto flex flex-col justify-center min-h-screen px-4"
+        style={{ fontFamily: 'Inter, sans-serif' }}
+        action={signInAction}
+      >
         <Input
-          type="password"
-          name="password"
-          placeholder="Your password"
+          label="school email"
+          id="email"
+          name="email"
+          type="email"
+          placeholder="you@school.edu"
           required
         />
-        <SubmitButton pendingText="Signing In..." formAction={signInAction}>
-          Sign in
-        </SubmitButton>
-        <FormMessage message={searchParams} />
+        <Input
+          label="password"
+          id="password"
+          name="password"
+          type="password"
+          placeholder="your password"
+          required
+        />
+        <Button type="submit">sign in</Button>
+        <div className="mt-4">
+          <FormMessage message={searchParams} />
+        </div>
+        <div className="flex justify-between items-center mb-8">
+          <Link
+            className="text-[#B04F17] underline text-small font-black lowercase"
+            href="/forgot-password"
+          >
+            forgot password?
+          </Link>
+        </div>
+      </form>
+      <div className="fixed bottom-0 left-0 w-full z-50 flex justify-center pb-6">
+        <Navbar navItems={[
+          { href: "/", label: "home" },
+          { href: "/sign-up", label: "sign up" },
+        ]} />
       </div>
-    </form>
+    </>
   );
 }

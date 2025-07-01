@@ -86,19 +86,6 @@ export default async function DashboardPage() {
         )}
       </InfoCard>
 
-      {/* Next Match */}
-      <InfoCard title="Next Match">
-        {nextMatch ? (
-          <div>
-            <div className="font-semibold">{nextMatch.home_team} vs. {nextMatch.away_team}</div>
-            <div className="text-xs text-neutral-500">{nextMatch.address}</div>
-            <div className="text-xs text-neutral-500">{nextMatch.date && new Date(nextMatch.date).toLocaleString()}</div>
-          </div>
-        ) : (
-          <div className="text-neutral-400">No upcoming matches</div>
-        )}
-      </InfoCard>
-
       {/* Quick Actions */}
       <div className="grid grid-cols-2 sm:grid-cols-2 gap-3 mt-8">
         <Link href="/sessions/create"><Button className="w-full bg-neutral-800 text-white rounded-xl px-4 py-2 hover:bg-neutral-700 flex gap-2"><Plus size={18}/>Create Session</Button></Link>

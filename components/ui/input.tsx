@@ -1,25 +1,27 @@
-import * as React from "react";
+import React from "react";
 
-import { cn } from "@/lib/utils";
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label: string;
+  id: string;
+}
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
-
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, ...props }, ref) => {
-    return (
-      <input
-        type={type}
-        className={cn(
-          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-          className,
-        )}
-        ref={ref}
-        {...props}
-      />
-    );
-  },
+export const Input: React.FC<InputProps> = ({ label, id, className = "", autoComplete, ...props }) => (
+  <div className="flex flex-col mb-8 w-full max-w-lg mx-auto">
+    <label
+      htmlFor={id}
+      className="text-[#B04F17] font-black text-lg mb-2 lowercase font-sans"
+      style={{ fontFamily: 'Inter, sans-serif', textTransform: 'lowercase' }}
+    >
+      {label}
+    </label>
+    <input
+      id={id}
+      autoComplete={autoComplete || "off"}
+      className={`w-full py-2 px-4 rounded-lg border-4 border-[#B04F17] bg-[#02503B] text-[#B04F17] font-black text-base font-sans focus:outline-none focus:ring-2 focus:ring-[#B04F17] placeholder-[#B04F17] placeholder:font-normal ${className}`}
+      style={{ fontFamily: 'Inter, sans-serif' }}
+      {...props}
+    />
+  </div>
 );
-Input.displayName = "Input";
 
-export { Input };
+export default Input;
