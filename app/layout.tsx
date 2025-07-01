@@ -1,5 +1,4 @@
 import { Inter } from "next/font/google";
-import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
 const inter = Inter({
@@ -9,8 +8,7 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Minimal Landing",
-  description: "A minimalist fullscreen landing page layout",
+  title: "network",
 };
 
 export default function RootLayout({
@@ -19,14 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className}>
       <body className="bg-[#02503B] min-h-screen min-w-full flex items-center justify-center">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
           {children}
-        </ThemeProvider>
       </body>
     </html>
   );
