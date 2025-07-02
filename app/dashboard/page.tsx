@@ -28,6 +28,9 @@ export default async function DashboardPage() {
           <Link href="/sessions/find"><Button className="w-full bg-[#B04F17] text-[#02503B] rounded-lg font-black text-lg hover:bg-[#963f0f]">find sessions</Button></Link>
           <Link href="/players"><Button className="w-full bg-[#B04F17] text-[#02503B] rounded-lg font-black text-lg hover:bg-[#963f0f]">find players</Button></Link>
         </div>
+        <form action={signOutAction} className="w-full max-w-lg mt-8">
+          <Button type="submit">sign out</Button>
+        </form>
       </main>
       <div className="fixed bottom-0 left-0 w-full z-50 flex justify-center pb-6">
         <Navbar navItems={[
