@@ -2,7 +2,6 @@ import { createClient } from "@/utils/supabase/server";
 import Button from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
-import { signOutAction } from "@/app/actions";
 
 export default async function DashboardPage() {
   const supabase = await createClient();

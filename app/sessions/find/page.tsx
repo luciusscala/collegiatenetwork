@@ -7,29 +7,30 @@ interface Session {
   title: string;
   date: string;
   address: string;
-}
-
-async function fetchAllSessions() {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("sessions")
-    .select("id, title, date, address")
-    .order("date", { ascending: true });
-  if (error) {
-    console.error("Error fetching sessions:", error);
-    return [];
-  }
-  return data as Session[];
+  created_at: string;
 }
 
 export default async function FindSessionsPage() {
-  const sessions = await fetchAllSessions();
+  const supabase = await createClient();
+  const { data: sessions, error } = await supabase
+    .from("sessions")
+    .select("id, title, date, address, created_at")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return (
+      <main className="min-h-screen w-full flex flex-col items-center justify-center bg-[#02503B] px-4 py-10">
+        <h1 className="text-3xl font-black mb-8 text-[#B04F17]">find sessions</h1>
+        <div className="text-red-500 text-center text-xl font-black py-12">Error loading sessions.</div>
+      </main>
+    );
+  }
 
   return (
     <>
       <main className="min-h-screen w-full flex flex-col items-center justify-center bg-[#02503B] px-4 py-10" style={{ fontFamily: 'Inter, sans-serif' }}>
         <h1 className="text-3xl font-black mb-8 text-[#B04F17]">find sessions</h1>
-        {sessions.length === 0 ? (
+        {(!sessions || sessions.length === 0) ? (
           <div className="text-[#B04F17] text-center text-xl font-black py-12">no sessions found</div>
         ) : (
           <ul className="w-full max-w-lg flex flex-col gap-4">
@@ -42,9 +43,6 @@ export default async function FindSessionsPage() {
                 >
                   <div className="font-black text-lg mb-1 text-[#B04F17]">
                     {session.title}
-                  </div>
-                  <div className="text-base mb-1 text-[#B04F17]">
-                    {session.address}
                   </div>
                   <div className="text-sm text-[#B04F17] opacity-80">
                     {new Date(session.date).toLocaleString()}
