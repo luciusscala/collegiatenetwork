@@ -16,29 +16,17 @@ export async function updateSessionAction(sessionId: string, formData: FormData)
   }
   const address = formData.get("address")?.toString() || "";
 
-  try {
-    // Fetch session to check host
-    const { data: session, error: fetchError } = await supabase
-      .from("sessions")
-      .select("host_id")
-      .eq("id", sessionId)
-      .single();
-    if (fetchError || !session) throw fetchError || new Error("Session not found");
-    if (session.host_id !== user.id) return redirect(`/sessions/${sessionId}`);
+  const { data: session } = await supabase
+    .from("sessions")
+    .select("host_id")
+    .eq("id", sessionId)
+    .single();
+  if (!session || session.host_id !== user.id) return redirect(`/sessions/${sessionId}`);
 
-    // Update session
-    const { error: updateError } = await supabase
-      .from("sessions")
-      .update({ title, date, address })
-      .eq("id", sessionId);
-    if (updateError) throw updateError;
-    redirect(`/sessions`); // Redirect to sessions list after save
-  } catch (error) {
-    // Ignore Next.js redirect errors
-    if (error instanceof Error && error.message === 'NEXT_REDIRECT') {
-      return;
-    }
-    console.error("Error updating session:", error);
-    redirect(`/sessions`);
-  }
+  await supabase
+    .from("sessions")
+    .update({ title, date, address })
+    .eq("id", sessionId);
+
+  redirect(`/sessions`);
 } 
