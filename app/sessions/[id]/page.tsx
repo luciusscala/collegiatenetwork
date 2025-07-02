@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { joinSession, leaveSession } from "@/app/actions/sessionActions";
+import Navbar from "@/components/Navbar";
 
 interface Session {
   id: string;
@@ -56,71 +57,81 @@ export default async function SessionDetailsPage({ params }: { params: { id: str
 
   if (!session) {
     return (
-      <main className="max-w-xl mx-auto px-4 py-16 text-center">
-        <h1 className="text-2xl font-bold mb-4 text-neutral-900 dark:text-neutral-100">Session not found</h1>
-        <p className="text-neutral-500 mb-8">This session does not exist.</p>
-        <Link href="/sessions" className="text-green-700 hover:underline">Back to Sessions</Link>
-      </main>
+      <>
+        <main className="min-h-screen w-full flex flex-col items-center justify-center bg-[#02503B] px-4 py-10" style={{ fontFamily: 'Inter, sans-serif' }}>
+          <h1 className="text-3xl font-black mb-4 text-[#B04F17]">session not found</h1>
+          <p className="text-[#B04F17] mb-8">this session does not exist.</p>
+          <Link href="/sessions" className="underline font-black text-[#B04F17]">back to sessions</Link>
+        </main>
+        <div className="fixed bottom-0 left-0 w-full z-50 flex justify-center pb-6">
+          <Navbar navItems={[{ href: "/dashboard", label: "home" }]} />
+        </div>
+      </>
     );
   }
 
   return (
-    <main className="max-w-xl mx-auto px-4 py-10">
-      <h1 className="text-2xl font-bold mb-4 text-neutral-900 dark:text-neutral-100">{session.title}</h1>
-      <div className="mb-2 text-neutral-600 dark:text-neutral-300">{session.address}</div>
-      <div className="mb-6 text-neutral-400 text-sm">{new Date(session.date).toLocaleString()}</div>
+    <>
+      <main className="min-h-screen w-full flex flex-col items-center justify-center bg-[#02503B] px-4 py-10" style={{ fontFamily: 'Inter, sans-serif' }}>
+        <h1 className="text-3xl font-black mb-4 text-[#B04F17]">{session.title}</h1>
+        <div className="mb-2 text-lg text-[#B04F17]">{session.address}</div>
+        <div className="mb-6 text-base text-[#B04F17] opacity-80">{new Date(session.date).toLocaleString()}</div>
 
-      <div className="mb-8">
-        <h2 className="font-semibold text-lg mb-2 text-neutral-800 dark:text-neutral-200">Members</h2>
-        <ul className="flex flex-col gap-2">
-          {members.length === 0 ? (
-            <li className="text-neutral-500">No members yet</li>
-          ) : (
-            members.map((member) => (
-              <li key={member.id} className="text-neutral-700 dark:text-neutral-100">
-                {member.name || "Unknown"}
-                {member.id === session.host_id && (
-                  <span className="ml-2 text-xs text-green-700 font-semibold">(Host)</span>
-                )}
-              </li>
-            ))
+        <div className="mb-8 w-full max-w-lg">
+          <h2 className="font-black text-lg mb-2 text-[#B04F17]">members</h2>
+          <ul className="flex flex-col gap-2">
+            {members.length === 0 ? (
+              <li className="text-[#B04F17]">no members yet</li>
+            ) : (
+              members.map((member) => (
+                <li key={member.id} className="text-[#B04F17] font-black">
+                  {member.name || "unknown"}
+                  {member.id === session.host_id && (
+                    <span className="ml-2 text-xs text-[#B04F17] font-black">(host)</span>
+                  )}
+                </li>
+              ))
+            )}
+          </ul>
+        </div>
+
+        <div className="flex gap-4">
+          {isHost && (
+            <Link
+              href={`/sessions/${session.id}/edit`}
+              className="px-6 py-2 rounded-lg bg-[#B04F17] text-[#02503B] font-black text-lg hover:bg-[#963f0f] transition-colors"
+            >
+              edit session
+            </Link>
           )}
-        </ul>
+          {userId && !isHost && (
+            isMember ? (
+              <form action={leaveSession} method="POST">
+                <input type="hidden" name="session_id" value={session.id} />
+                <button
+                  type="submit"
+                  className="px-6 py-2 rounded-lg bg-[#B04F17] text-[#02503B] font-black text-lg hover:bg-[#963f0f] transition-colors"
+                >
+                  leave session
+                </button>
+              </form>
+            ) : (
+              <form action={joinSession} method="POST">
+                <input type="hidden" name="session_id" value={session.id} />
+                <button
+                  type="submit"
+                  className="px-6 py-2 rounded-lg bg-[#B04F17] text-[#02503B] font-black text-lg hover:bg-[#963f0f] transition-colors"
+                >
+                  join session
+                </button>
+              </form>
+            )
+          )}
+        </div>
+      </main>
+      <div className="fixed bottom-0 left-0 w-full z-50 flex justify-center pb-6">
+        <Navbar navItems={[{ href: "/dashboard", label: "home" }]} />
       </div>
-
-      <div className="flex gap-4">
-        {isHost && (
-          <Link
-            href={`/sessions/${session.id}/edit`}
-            className="px-4 py-2 rounded bg-green-700 text-white font-medium hover:bg-green-800 transition-colors"
-          >
-            Edit Session
-          </Link>
-        )}
-        {userId && !isHost && (
-          isMember ? (
-            <form action={leaveSession} method="POST">
-              <input type="hidden" name="session_id" value={session.id} />
-              <button
-                type="submit"
-                className="px-4 py-2 rounded bg-neutral-200 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-100 font-medium hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors"
-              >
-                Leave Session
-              </button>
-            </form>
-          ) : (
-            <form action={joinSession} method="POST">
-              <input type="hidden" name="session_id" value={session.id} />
-              <button
-                type="submit"
-                className="px-4 py-2 rounded bg-green-700 text-white font-medium hover:bg-green-800 transition-colors"
-              >
-                Join Session
-              </button>
-            </form>
-          )
-        )}
-      </div>
-    </main>
+    </>
   );
 } 

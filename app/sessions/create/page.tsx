@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import CreateSessionForm from "@/components/CreateSessionForm";
+import Navbar from "@/components/Navbar";
 
 export default async function CreateSessionPage() {
   const supabase = await createClient();
@@ -80,6 +81,17 @@ export default async function CreateSessionPage() {
     }
   }
 
-  // Use the client component for the form to display error messages
-  return <CreateSessionForm createSession={createSession} />;
+  return (
+    <>
+      <main className="min-h-screen w-full flex flex-col items-center justify-center bg-[#02503B] px-4 py-10" style={{ fontFamily: 'Inter, sans-serif' }}>
+        <h1 className="text-3xl font-black mb-8 text-[#B04F17]">create session</h1>
+        <div className="w-full max-w-lg">
+          <CreateSessionForm createSession={createSession} />
+        </div>
+      </main>
+      <div className="fixed bottom-0 left-0 w-full z-50 flex justify-center pb-6">
+        <Navbar navItems={[{ href: "/dashboard", label: "home" }]} />
+      </div>
+    </>
+  );
 } 

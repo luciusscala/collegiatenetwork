@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import Navbar from "@/components/Navbar";
 
 interface Player {
   id: string;
@@ -32,58 +33,49 @@ export default async function PlayersPage() {
   const players = await fetchAllPlayers();
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold mb-8 text-neutral-900 dark:text-neutral-100">Players</h1>
-      
-      {players.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-neutral-500 text-lg">No players found</p>
-          <p className="text-neutral-400 text-sm mt-2">Players will appear here once they register</p>
-        </div>
-      ) : (
-        <div className="bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-neutral-50 dark:bg-neutral-800">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                  School
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                  Position
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
-              {players.map((player) => (
-                <tr key={player.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                      {player.name}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-neutral-600 dark:text-neutral-400">
-                      {player.school || "—"}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {player.position ? (
-                      <span className="inline-flex text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full px-2.5 py-0.5 font-medium">
-                        {player.position}
-                      </span>
-                    ) : (
-                      <span className="text-sm text-neutral-400">—</span>
-                    )}
-                  </td>
+    <>
+      <main className="min-h-screen w-full flex flex-col items-center justify-center bg-[#02503B] px-4 py-10" style={{ fontFamily: 'Inter, sans-serif' }}>
+        <h1 className="text-3xl font-black mb-8 text-[#B04F17]">players</h1>
+        {players.length === 0 ? (
+          <div className="text-[#B04F17] text-center text-xl font-black py-12">no players found</div>
+        ) : (
+          <div className="w-full max-w-2xl rounded-lg overflow-hidden">
+            <table className="w-full bg-[#02503B]">
+              <thead>
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-black text-[#B04F17] uppercase tracking-wider">name</th>
+                  <th className="px-6 py-3 text-left text-xs font-black text-[#B04F17] uppercase tracking-wider">school</th>
+                  <th className="px-6 py-3 text-left text-xs font-black text-[#B04F17] uppercase tracking-wider">position</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </main>
+              </thead>
+              <tbody>
+                {players.map((player) => (
+                  <tr key={player.id} className="hover:bg-[#01412f] transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-base font-black text-[#B04F17]">{player.name}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-base text-[#B04F17]">{player.school || "—"}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {player.position ? (
+                        <span className="inline-flex text-xs bg-[#B04F17] text-[#02503B] rounded-full px-2.5 py-0.5 font-black">
+                          {player.position}
+                        </span>
+                      ) : (
+                        <span className="text-base text-[#B04F17] opacity-60">—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </main>
+      <div className="fixed bottom-0 left-0 w-full z-50 flex justify-center pb-6">
+        <Navbar navItems={[{ href: "/dashboard", label: "home" }]} />
+      </div>
+    </>
   );
 } 
