@@ -47,7 +47,7 @@ async function fetchSessionDetails(sessionId: string, userId: string | null, sup
   return { session, members, isHost, isMember };
 }
 
-export default async function SessionDetailsPage({ params }: { params: { id: string } }) {
+export default async function SessionDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

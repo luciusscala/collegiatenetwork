@@ -6,7 +6,7 @@ import Input from "@/components/ui/input";
 import Button from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 
-export default async function EditSessionPage({ params }: { params: { id: string } }) {
+export default async function EditSessionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
