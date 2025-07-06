@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import { getHmrRefreshHash } from "next/dist/server/app-render/work-unit-async-storage.external";
 
 export default async function Signup(props: {
   searchParams: Promise<Message>;
@@ -35,6 +36,7 @@ export default async function Signup(props: {
         <Navbar navItems={[
           { href: "/", label: "home" },
           { href: "/sign-in", label: "sign-in" },
+          { href: "/faq", label: "faq" }
         ]} />
       </div>
     </>
