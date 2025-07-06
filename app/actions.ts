@@ -30,7 +30,7 @@ export const signUpAction = async (formData: FormData) => {
   });
 
   if (!response.ok) {
-    throw new Error("Verification failed");
+    return encodedRedirect("error", "/sign-up", "sorry, something went wrong");
   }
 
   const verifyStatus = await response.json();
@@ -71,7 +71,7 @@ export const signUpAction = async (formData: FormData) => {
   return encodedRedirect(
     "success",
     "/sign-up",
-    "Thanks for signing up! Please check your email for a verification link.",
+    "you are eligible. please check your email for a verification link.",
   );
 };
 
