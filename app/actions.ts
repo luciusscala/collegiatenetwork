@@ -21,12 +21,12 @@ export const signUpAction = async (formData: FormData) => {
   }
 
   // Call FastAPI endpoint directly, no longer use the API route
-  const response = await fetch("http://127.0.0.1:8000/verify", {
+  const response = await fetch(`https://web-production-1ede6.up.railway.app/verify?email=${encodeURIComponent(email || "")}&name=${encodeURIComponent(name || "")}`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
+      "accept": "application/json",
     },
-    body: new URLSearchParams({ name: name || "", email: email || "" }).toString(),
+    body: "",
   });
 
   if (!response.ok) {
