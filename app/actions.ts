@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 export const signUpAction = async (formData: FormData) => {
   const name = formData.get("name")?.toString();
   const email = formData.get("email")?.toString();
+  const sport = formData.get("sport")?.toString();
   const password = formData.get("password")?.toString();
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
@@ -21,7 +22,7 @@ export const signUpAction = async (formData: FormData) => {
   }
 
   // Call FastAPI endpoint directly, no longer use the API route
-  const response = await fetch(`https://web-production-1ede6.up.railway.app/verify?email=${encodeURIComponent(email || "")}&name=${encodeURIComponent(name || "")}`, {
+  const response = await fetch(`https://web-production-1ede6.up.railway.app/verify?email=${encodeURIComponent(email || "")}&name=${encodeURIComponent(name || "")}&sport=${encodeURIComponent(sport || "")}`, {
     method: "POST",
     headers: {
       "accept": "application/json",
