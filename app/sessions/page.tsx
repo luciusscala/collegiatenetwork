@@ -13,9 +13,7 @@ interface Session {
 
 export default async function SessionsPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) redirect("/sign-in");
+  
 
   const { data: sessions, error } = await supabase
     .from("sessions")
