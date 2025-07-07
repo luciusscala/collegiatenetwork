@@ -8,7 +8,7 @@ export default async function DashboardPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return <div className="p-8 text-center">Not authenticated</div>;
+  if (!user) return <div className="p-8 text-center text-[#B04F17]">not authenticated</div>;
 
   // Fetch user info
   const { data: userData } = await supabase

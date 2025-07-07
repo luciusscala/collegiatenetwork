@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 
 interface Session {
@@ -12,6 +13,10 @@ interface Session {
 
 export default async function FindSessionsPage() {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) redirect('/sign-in');
+
   const { data: sessions, error } = await supabase
     .from("sessions")
     .select("id, title, date, address, created_at")
