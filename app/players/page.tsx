@@ -28,7 +28,6 @@ export default async function PlayersPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) redirect("/sign-in");
 
   const players = await fetchAllPlayers();
 

@@ -7,8 +7,6 @@ export default async function CreateSessionPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   
-  if (!user) redirect('/sign-in');
-
   async function createSession(formData: FormData) {
     'use server';
     const supabase = await createClient();
