@@ -1,18 +1,11 @@
-import { createClient } from "@/utils/supabase/server";
+import { requireAuth, getUserData } from "@/utils/auth/server";
 import Button from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 
 export default async function ProfilePage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return <div className="p-8 text-center">Not authenticated</div>;
-
-  const { data: userData } = await supabase
-    .from("users")
-    .select("name, school, position")
-    .eq("id", user.id)
-    .single();
+  const user = await requireAuth();
+  const userData = await getUserData(user.id);
 
   return (
     <>

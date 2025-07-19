@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { requireAuth, getUserData, createAuthClient } from "@/utils/auth/server";
 import Input from "@/components/ui/input";
 import Button from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
@@ -7,9 +7,8 @@ import { redirect } from "next/navigation";
 
 async function updateProfileAction(formData: FormData) {
   'use server';
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return redirect("/sign-in");
+  const user = await requireAuth();
+  const supabase = await createAuthClient();
 
   const name = formData.get("name")?.toString() || "";
   const school = formData.get("school")?.toString() || "";
@@ -24,15 +23,8 @@ async function updateProfileAction(formData: FormData) {
 }
 
 export default async function EditProfilePage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return <div className="p-8 text-center">Not authenticated</div>;
-
-  const { data: userData } = await supabase
-    .from("users")
-    .select("name, school, position")
-    .eq("id", user.id)
-    .single();
+  const user = await requireAuth();
+  const userData = await getUserData(user.id);
 
   return (
     <>

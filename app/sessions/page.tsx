@@ -1,5 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+import { requireAuth, createAuthClient } from "@/utils/auth/server";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 
@@ -12,8 +11,8 @@ interface Session {
 }
 
 export default async function SessionsPage() {
-  const supabase = await createClient();
-  
+  const user = await requireAuth();
+  const supabase = await createAuthClient();
 
   const { data: sessions, error } = await supabase
     .from("sessions")

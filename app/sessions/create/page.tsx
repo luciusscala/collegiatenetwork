@@ -1,17 +1,15 @@
-import { createClient } from "@/utils/supabase/server";
+import { requireAuth, createAuthClient } from "@/utils/auth/server";
 import { redirect } from "next/navigation";
 import CreateSessionForm from "@/components/CreateSessionForm";
 import Navbar from "@/components/Navbar";
 
 export default async function CreateSessionPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await requireAuth();
   
   async function createSession(formData: FormData) {
     'use server';
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) redirect('/sign-in');
+    const user = await requireAuth();
+    const supabase = await createAuthClient();
 
     const title = formData.get('title') as string;
     const date = formData.get('date') as string;

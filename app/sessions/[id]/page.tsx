@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { getAuthenticatedUser, createAuthClient } from "@/utils/auth/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { joinSession, leaveSession } from "@/app/actions/sessionActions";
@@ -49,8 +49,8 @@ async function fetchSessionDetails(sessionId: string, userId: string | null, sup
 
 export default async function SessionDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getAuthenticatedUser();
+  const supabase = await createAuthClient();
   const userId = user ? user.id : null;
 
   const { session, members, isHost, isMember } = await fetchSessionDetails(id, userId, supabase);

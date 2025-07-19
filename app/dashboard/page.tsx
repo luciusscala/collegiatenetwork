@@ -1,21 +1,11 @@
-import { createClient } from "@/utils/supabase/server";
+import { requireAuth, getUserData } from "@/utils/auth/server";
 import Button from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return <div className="p-8 text-center text-[#B04F17]">not authenticated</div>;
-
-  // Fetch user info
-  const { data: userData } = await supabase
-    .from("users")
-    .select("name, school, position")
-    .eq("id", user.id)
-    .single();
+  const user = await requireAuth();
+  const userData = await getUserData(user.id);
 
   return (
     <>

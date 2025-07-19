@@ -1,7 +1,7 @@
 "use server";
 
 import { encodedRedirect } from "@/utils/utils";
-import { createClient } from "@/utils/supabase/server";
+import { createAuthClient } from "@/utils/auth/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -10,7 +10,7 @@ export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const sport = formData.get("sport")?.toString();
   const password = formData.get("password")?.toString();
-  const supabase = await createClient();
+  const supabase = await createAuthClient();
   const origin = (await headers()).get("origin");
 
   if (!email || !password) {
@@ -44,6 +44,12 @@ export const signUpAction = async (formData: FormData) => {
     password,
     options: {
       emailRedirectTo: `${origin}/auth/callback`,
+      data: {
+        name: name || "Unknown",
+        sport: sport || "Unknown",
+        school: "Unknown", // You can update this based on your verification API
+        position: "Unknown", // You can update this based on your verification API
+      },
     },
   });
 
@@ -52,22 +58,8 @@ export const signUpAction = async (formData: FormData) => {
     return encodedRedirect("error", "/sign-up", error.message);
   }
 
-  // Insert the user into your custom users table
-  if (user) {
-    const { error: insertError } = await supabase
-      .from("users")
-      .insert({
-        id: user.id,                        // same UUID as auth.users.id
-        name: name || "Unnamed",            // from signup form
-        school: "Unknown",                  // or you can pre-fill if you know
-        position: "Unknown",
-      });
-
-    if (insertError) {
-      console.error("Error inserting user into users table:", insertError);
-      // Don't fail the signup if this fails, but log it
-    }
-  }
+  // Note: With email confirmation enabled, the user record in your custom table
+  // will be created by either the database trigger or the auth callback handler
 
   return encodedRedirect(
     "success",
@@ -79,7 +71,7 @@ export const signUpAction = async (formData: FormData) => {
 export const signInAction = async (formData: FormData) => {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
-  const supabase = await createClient();
+  const supabase = await createAuthClient();
 
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -95,7 +87,7 @@ export const signInAction = async (formData: FormData) => {
 
 export const forgotPasswordAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
-  const supabase = await createClient();
+  const supabase = await createAuthClient();
   const origin = (await headers()).get("origin");
   const callbackUrl = formData.get("callbackUrl")?.toString();
 
@@ -128,7 +120,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
 };
 
 export const resetPasswordAction = async (formData: FormData) => {
-  const supabase = await createClient();
+  const supabase = await createAuthClient();
 
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirmPassword") as string;
@@ -165,7 +157,7 @@ export const resetPasswordAction = async (formData: FormData) => {
 };
 
 export const signOutAction = async () => {
-  const supabase = await createClient();
+  const supabase = await createAuthClient();
   await supabase.auth.signOut();
   return redirect("/sign-in");
 };

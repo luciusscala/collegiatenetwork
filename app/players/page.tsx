@@ -1,5 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+import { requireAuth, createAuthClient } from "@/utils/auth/server";
 import Navbar from "@/components/Navbar";
 
 interface Player {
@@ -10,7 +9,7 @@ interface Player {
 }
 
 async function fetchAllPlayers() {
-  const supabase = await createClient();
+  const supabase = await createAuthClient();
   const { data, error } = await supabase
     .from("users")
     .select("id, name, school, position")
@@ -25,10 +24,7 @@ async function fetchAllPlayers() {
 }
 
 export default async function PlayersPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-
+  const user = await requireAuth();
   const players = await fetchAllPlayers();
 
   return (

@@ -1,12 +1,11 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import { requireAuth, createAuthClient } from "@/utils/auth/server";
 import { redirect } from "next/navigation";
 
 export async function updateSessionAction(sessionId: string, formData: FormData) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return redirect("/sign-in");
+  const user = await requireAuth();
+  const supabase = await createAuthClient();
 
   const title = formData.get("title")?.toString() || "";
   let date = formData.get("date")?.toString() || "";
